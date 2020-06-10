@@ -1,4 +1,5 @@
-import {Lightning} from 'wpe-lightning-sdk';
+import {Lightning, Utils} from "wpe-lightning-sdk"
+
 import {List} from "../components"
 
 export default class Main extends Lightning.Component{
@@ -8,30 +9,35 @@ export default class Main extends Lightning.Component{
             Lists: {
                 x: 100, y: 560, zIndex: 3
             },
-            // @todo: add logo
+            Logo: {
+                src: Utils.asset("images/logo.png"),
+                x: 20, y: 30
+            }
         };
     }
 
     _init() {
-        this._index = 0; 
+        this._index = 0;
+        this.signal('inMain', true);
     }
 
     _focus() {
-
+        // don't see anything to do here
     }
 
-    /**
-     * @todo: add set movies() that will be called by the data-provider
-     * inside set movies create new List child and call it's movies setter
-     * and hand over the movies
-     */
+    set movies(data) {
+        this.tag('Lists').add({
+            type: List,
+            movies: data.results
+        });
+    }
 
     _unfocus() {
-        // @todo
+        // same here
     }
 
     _getFocused() {
-        // @todo: delegate focus to List child
+        return this.tag('Lists').getByRef('List');
     }
 
 }

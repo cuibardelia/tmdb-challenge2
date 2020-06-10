@@ -2,7 +2,7 @@ import { Lightning, Utils, Router } from 'wpe-lightning-sdk';
 import provider from "./lib/data-provider";
 import routes from "./lib/routes";
 import {init as initApi} from "./lib/Api"
-import {Splash} from "./pages";
+import {Splash, Main} from "./pages";
 
 export default class App extends Lightning.Component {
 
@@ -31,6 +31,10 @@ export default class App extends Lightning.Component {
             Splash:{
                type: Splash
             },
+            Main: {
+                type: Main,
+                visible: false,
+            },
             Widgets: {
                 Menu:{
                     // @todo; this is an extra assignment,
@@ -49,18 +53,16 @@ export default class App extends Lightning.Component {
     }
 
     _handleEnter(){
-        // call
+      // FIXME: hack for checking my page here as I cannot find another way
+        this._setState("SeeMain");
+
     }
 
     _getFocused(){
         return this.tag("Splash")
     }
 
-    _handleLeft(){
-        this.setIndex(this.index - 1);
-    }
-
-     static _states() {
+      static _states() {
         return [
             class Loading extends this {
                 $enter() {
@@ -69,6 +71,19 @@ export default class App extends Lightning.Component {
 
                 $exit() {
                     this.tag("Loading").visible = false;
+                }
+            },
+            class SeeMain extends this {
+                $enter() {
+                    this.tag('Splash').visible = false;
+                    this.tag('Main').visible = true;
+                }
+
+                $exit() {
+                    this.tag('Main').visible = false;
+                }
+                _getFocused() {
+                    return this.tag('Main');
                 }
             },
             class Widgets extends this {

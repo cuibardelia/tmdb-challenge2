@@ -1,4 +1,4 @@
-import {Lightning, Utils} from "wpe-lightning-sdk";
+import {Lightning} from "wpe-lightning-sdk";
 
 export default class Level extends Lightning.Component{
     static _template(){
@@ -7,18 +7,25 @@ export default class Level extends Lightning.Component{
 
             },
             Title: {
-                y: 310, x: 20,
-                text: {fontFace: "Magra", fontSize: 24}
+                y: 460, x: 20,
+                w: 300,
+                text: {fontFace: 'SourceSansPro-Regular', fontSize: 24}
             }
         }
     }
 
-    /**
-     * @todo:
-     * - toggle alpha on focus / unfocus (transition)
-     */
+    _focus() {
+        this.tag('Image').setSmooth('scale', 1.2);
+    }
+
+    _unfocus() {
+        this.tag('Image').setSmooth('scale', 1);
+    }
 
     set item(v){
-        // @todo: patch the correct image and title
+        this.patch({
+            Image: {smooth:{src:`https://image.tmdb.org/t/p/w300/${v && v.poster_path}`}},
+            Title: {smooth:{text: v && v.title}},
+        })
     }
 }
