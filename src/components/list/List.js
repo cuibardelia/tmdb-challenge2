@@ -1,15 +1,27 @@
 import {Lightning} from "wpe-lightning-sdk";
-
-import Level from "../item/Item.js"
+import Item from "../item";
 
 export default class List extends Lightning.Component {
     static _template() {
         return {
-            Label: {
-                text: {text: '', fontFace: 'SourceSansPro-Regular'}
+            Items: {
+                y: 120, forceZIndexContext: true, boundsMargin: [500, 100, 500, 100],
+                transitions: {
+                    x: {duration: .3, timingFunction: 'cubic-bezier(0.20, 1.00, 0.80, 1.00)'}
+                }
             },
-            Levels: {
-                y: 75
+            Focus: {
+                /**
+                 * @ todo: Your goal is to add a focus indicator. Please take a look at the video
+                 * and inspect the rectanle frame that's before the focused movie item.
+                 * extra: Animate it a bit when the focus changes to the next item
+                 */
+            },
+            Metadata: {
+                /**
+                 * @todo: Your goal is to add a component that have multiple text labels,
+                 * 1 for the Title of the selected asset and 1 for the genre.
+                 */
             }
         }
     }
@@ -18,20 +30,20 @@ export default class List extends Lightning.Component {
         this._index = 0;
     }
 
-    _handleLeft() {
-        if (this._index > 0) {
-            this.setIndex(this.index - 1);
-        }
+    _handleLeft(){
+        this.setIndex(Math.max(0, --this._index));
     }
 
-    _handleRight() {
-        if (this.items.length > this._index) {
-            this.setIndex(this.index + 1);
-        }
+    _handleRight(){
+        this.setIndex(Math.min(++this._index, this.items.length - 1));
     }
 
-    setIndex(index) {
-        this._index = index;
+    setIndex(idx){
+        // store new index
+        this._index = idx;
+
+        // update position
+        this.tag("Items").setSmooth("x",  idx * -220 );
     }
 
     set label(v) {
@@ -39,24 +51,22 @@ export default class List extends Lightning.Component {
     }
 
     set movies(v) {
-        console.log('here x', v)
         // we add an array of object with type: Item
-        this.tag("Levels").children = v.map((el, idx)=>{
+        this.tag("Items").children = v.map((movie, index)=>{
             return {
-                type: Level,
-                x: idx * 320,
-                item: el,
-                visible: idx <= 12
+                type: Item,
+                item: movie,
+                x: index * (Item.width + Item.offset)
             };
         });
     }
 
     get items() {
-        return this.tag("Levels").children;
+        return this.tag("Items").children;
     }
 
     get activeItem() {
-        return this.items.getAt(this._index);
+        return this.items[this._index];
     }
 
     _getFocused() {

@@ -1,8 +1,10 @@
 import { Lightning, Utils, Router } from 'wpe-lightning-sdk';
 import provider from "./lib/data-provider";
 import routes from "./lib/routes";
+import widgets from "./lib/widgets";
 import {init as initApi} from "./lib/Api"
-import {Splash, Main} from "./pages";
+import {Logo, Menu} from "./widgets";
+
 
 export default class App extends Lightning.Component {
 
@@ -18,51 +20,34 @@ export default class App extends Lightning.Component {
     // this will setup all pages and attach them to there route
     _setup() {
         initApi(this.stage);
+
         Router.startRouter({
-            appInstance: this, provider, routes
+            appInstance: this, provider, routes, widgets
         });
     }
 
     static _template() {
         return {
             Pages: {
-                forceZIndexContext: true, w: 1000
-            },
-            Splash:{
-               type: Splash
-            },
-            Main: {
-                type: Main,
-                visible: false,
+                forceZIndexContext: true
             },
             Widgets: {
+                Logo:{
+                    type: Logo, x: 100, y: 100
+                },
                 Menu:{
-                    // @todo; this is an extra assignment,
-                    // add Menu
+                    type: Menu, x: 100, y: 100
                 }
             },
             Loading: {
-
-            },
-            Wrapper:{
-                Label:{
-                    text:{}
-                }
+                rect: true, w: 1920, h: 1080, visible: false,
+                color: 0xff000000
             }
         };
     }
 
-    _handleEnter(){
-      // FIXME: hack for checking my page here as I cannot find another way
-        this._setState("SeeMain");
 
-    }
-
-    _getFocused(){
-        return this.tag("Splash")
-    }
-
-      static _states() {
+     static _states() {
         return [
             class Loading extends this {
                 $enter() {
@@ -71,19 +56,6 @@ export default class App extends Lightning.Component {
 
                 $exit() {
                     this.tag("Loading").visible = false;
-                }
-            },
-            class SeeMain extends this {
-                $enter() {
-                    this.tag('Splash').visible = false;
-                    this.tag('Main').visible = true;
-                }
-
-                $exit() {
-                    this.tag('Main').visible = false;
-                }
-                _getFocused() {
-                    return this.tag('Main');
                 }
             },
             class Widgets extends this {

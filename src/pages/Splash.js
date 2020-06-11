@@ -43,30 +43,12 @@ export default class Splash extends Lightning.Component{
         });
 
         this._spinnerAnimation = this.animation({duration: 1, repeat: -1, actions: [
-            {t: 'Spinner', p: "rotation", sm: 0, v: function(t) {
-                    if (t < .125) {
-                        return 45 * (Math.PI/180);
-                    } else if (t < .250) {
-                        return 90 * (Math.PI/180);
-                    } else if (t < .375) {
-                        return 135 * (Math.PI/180);
-                    } else if (t < .500) {
-                        return 180 * (Math.PI/180);
-                    } else if (t < .625) {
-                        return 225 * (Math.PI/180);
-                    } else if (t < .750) {
-                        return 270 * (Math.PI/180);
-                    } else if (t < .875) {
-                        return 315 * (Math.PI/180);
-                    } else if (t < 1) {
-                        return 360 * (Math.PI/180);
-                    }
-                }}
+            {t: 'Spinner', p: "rotation", sm: 0, v:{sm:0, 0:0, 1: Math.PI * 2} }
         ]});
     }
 
-    _handleEnter() {
-        Router.navigate('movies');
+    _handleEnter(){
+        Router.navigate("movies")
     }
 
     _active() {

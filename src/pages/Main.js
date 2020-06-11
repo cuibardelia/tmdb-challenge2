@@ -1,43 +1,46 @@
-import {Lightning, Utils} from "wpe-lightning-sdk"
-
-import {List} from "../components"
+import {Lightning, Router} from 'wpe-lightning-sdk';
+import {List} from "../components";
 
 export default class Main extends Lightning.Component{
     static _template() {
         return {
-            scale:0.5,
-            Lists: {
-                x: 100, y: 560, zIndex: 3
-            },
-            Logo: {
-                src: Utils.asset("images/logo.png"),
-                x: 20, y: 30
+            List: {
+                x: 100, y: 560, zIndex: 3,
+                type: List
             }
         };
     }
 
     _init() {
-        this._index = 0;
-        this.signal('inMain', true);
+        this._index = 0; 
+    }
+
+    set data(v){
+        this.tag("List").movies = v;
     }
 
     _focus() {
-        // don't see anything to do here
-    }
-
-    set movies(data) {
-        this.tag('Lists').add({
-            type: List,
-            movies: data.results
+        this.patch({
+            Lists: {
+                smooth: {y: [560, {duration: .2, timingFunction: 'cubic-bezier(0.20, 1.00, 0.80, 1.00)'}]}
+            }
         });
     }
 
     _unfocus() {
-        // same here
+        this.patch({
+            Lists: {
+                smooth: {y: [600, {duration: .4}]}
+            }
+        });
     }
 
     _getFocused() {
-        return this.tag('Lists').getByRef('List');
+        return this.tag("List");
+    }
+
+    _handleUp(){
+        Router.focusWidget("menu")
     }
 
 }
