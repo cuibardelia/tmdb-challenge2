@@ -1,5 +1,5 @@
 import {Router} from "wpe-lightning-sdk";
-import {getMovies} from './api';
+import {getPopular, getDetails} from './api';
 
 /**
  *  bind a data request to a specific route, before a page load
@@ -15,20 +15,19 @@ export default () => {
         // this will always be called
     });
 
-    Router.before("movies", async ({page})=>{
-        const movies = await getMovies();
-        page.data = movies;
-    }, 10 * 60);
+    Router.before("home/browse/movies", async ({page})=>{
+        page.data = await getPopular('movie');
+    }, 10 * 60 /* expires */);
 
+    Router.before("home/browse/series", async ({page})=>{
+        page.data =  await getPopular('tv');
+    }, 10 * 60 /* expires */);
 
-    Router.before('series', async({page}) => {
-        const series = await getSeries();
-        page.data = series
-    }, 600)
-    /**
-     * @todo:
-     * add a data-provider for the new series route
-     * and make sure you call grab the series from TMDBl
-     * https://api.themoviedb.org/3/tv/popular?api_key=${apiKey}
-     */
+    Router.before("details/:itemType/:itemId", async ({page, itemType, itemId})=>{
+        page.details = await getDetails(itemType, itemId);
+    });
+
+    Router.before("details/:itemType/:itemId/play", async ({page, itemType, itemId})=>{
+        page.item = await getDetails(itemType, itemId);
+    });
 }

@@ -94,6 +94,10 @@ export default class Item extends Lightning.Component {
         });
     }
 
+    get item() {
+        return this._item;
+    }
+
     set index(v) {
         this._index = v;
 
@@ -103,19 +107,6 @@ export default class Item extends Lightning.Component {
     }
 
     _focus() {
-        /**
-         * @todo:
-         * *
-         * Your goal is upon item focus to send a signal to the parent
-         * https://rdkcentral.github.io/Lightning/docs/components/communication/signal#docsNav
-         * *
-         * or use fireAncestors:
-         * https://rdkcentral.github.io/Lightning/docs/components/communication/fireancestors#docsNav
-         *
-         * and send a signal to our Parent component that the Metadata needs to update.
-         * As argument you can send: this._item (this holds all the data for the selected item)
-         */
-
         this._angle = 0.001;
         this._ratingNumber = 0;
 
@@ -132,6 +123,7 @@ export default class Item extends Lightning.Component {
         });
 
         this._focusAnimation.start();
+        this.signal("updateMetadata", {item:this._item})
     }
 
     _unfocus() {

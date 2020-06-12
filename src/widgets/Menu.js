@@ -9,15 +9,15 @@ export default class Menu extends Lightning.Component {
                 flex: {},
                 Movies: {
                     type: MenuItem,
-                    label: "Movies", id: "movies"
+                    label: "Movies", url: "home/browse/movies"
                 },
                 Series: {
                     type: MenuItem,
-                    label: "Series", id: "tv"
+                    label: "Series", url: "home/browse/series"
                 },
                 Exit: {
                     type: MenuItem,
-                    label: "Exit", id: "exit"
+                    label: "Exit", url: "exit"
                 }
             },
             Focus: {
@@ -33,26 +33,6 @@ export default class Menu extends Lightning.Component {
 
     _init() {
         this._index = 0;
-    }
-
-    get activeItem() {
-        return this.tag("Items").children[this._index];
-    }
-
-    _handleDown() {
-        Router.restoreFocus();
-    }
-
-    _handleLeft() {
-        if (this._index > 0) {
-            this.setIndex(this._index - 1);
-        }
-    }
-
-    _handleRight() {
-        if (this._index < this.tag("Items").children.length - 1) {
-            this.setIndex(this._index + 1);
-        }
     }
 
     _focus() {
@@ -71,23 +51,37 @@ export default class Menu extends Lightning.Component {
         this.tag("Focus").patch({
             smooth: {x: this.activeItem.finalX, w: this.activeItem.finalW}
         });
-
     }
 
     _handleEnter(){
-        /**
-         * @todo:
-         *
-         * Your goal is to make the menu work, upon pressing enter, this function will be called
-         * you need to navigate to something like:
-         * Router.navigate("home/series")
-         * or
-         * Router.navigate("series")
-         * or
-         * Router.navigate("home/browse/series")
-         * ---
-         * so based on focused menu item.
-         */
+        const item = this.activeItem;
+
+        if(item.url === "exit"){
+            this.application.closeApp();
+        }else if(item.url){
+            Router.navigate(item.url);
+        }
+    }
+
+    _handleLeft() {
+        if (this._index > 0) {
+            this.setIndex(this._index - 1);
+        }
+    }
+
+    _handleRight() {
+        if (this._index < this.tag("Items").children.length - 1) {
+            this.setIndex(this._index + 1);
+        }
+    }
+
+    _handleDown() {
+        // delegate focus back to the page we got focus from
+        Router.restoreFocus();
+    }
+
+    get activeItem() {
+        return this.tag("Items").children[this._index];
     }
 
     _getFocused(){
@@ -101,24 +95,23 @@ class MenuItem extends Lightning.Component {
     static _template() {
         return {
             flexItem: {marginRight: 40},
-            text: {text: "Movies", fontSize: 48, fontFace: "SourceSansPro-Regular"}
+            text: {text: "", fontSize: 48, fontFace: "SourceSansPro-Regular"}
         };
     }
 
     set label(v) {
         this._label = v;
-
         this.patch({
             text: {text: this._label}
         });
     }
 
-    set id(v) {
-        this._id = v;
+    set url(v) {
+        this._url = v;
     }
 
-    get id() {
-        return this._id;
+    get url() {
+        return this._url;
     }
 
 }

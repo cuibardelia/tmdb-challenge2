@@ -48,7 +48,7 @@ export default class Splash extends Lightning.Component{
     }
 
     _handleEnter(){
-        Router.navigate("movies")
+        Router.navigate("home/browse/movies")
     }
 
     _active() {
